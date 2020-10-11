@@ -1,0 +1,5 @@
+{
+    "token": "CONFIG_PLACEHOLDER",
+    "update_time": "HH:MM",
+    "chats_storage": "STORAGE_NAME_PLACEHOLDER.db"
+}

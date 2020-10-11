@@ -38,3 +38,47 @@ class CompetitionUpdater(object):
         self.__from_date = query_date
 
         return results
+
+    def get_leaderboard_info(self, competition_ref):
+        def parse_submission(submission):
+            return {
+                'score': submission['score'],
+                'date': submission['submissionDate'][:10]
+            }
+        try:
+            leaderboard = self.__api.competition_view_leaderboard(competition_ref)
+            submissions = leaderboard['submissions']
+            n = len(submissions)
+            result = []
+            if n == 0:
+                return result
+            result.append((1, parse_submission(submissions[0])))
+            if n == 1:
+                return result
+            if n > 10:
+                result.append((10, parse_submission(submissions[9])))
+            result.append((n, parse_submission(submissions[-1])))
+            return result
+        except Exception:
+            return []
+
+    def get_state(self, competition_ref):
+        competitions = self.__api.competitions_list(search=competition_ref, page=1)
+        if len(competitions) != 1:
+            return 'Use the id string of the competition (several competitions were found)'
+        competition = competitions[0]
+        if competition_ref != competition.ref:
+            return 'Use the id string of the competition (requested competition doesn\'t equal to any competition_id)'
+
+        time.sleep(1)
+        leaderboard = self.get_leaderboard_info(competition_ref)
+
+        return {
+            'title': competition.title,
+            'reward': competition.reward,
+            'teams': competition.teamCount,
+            'days_before_deadline': (competition.deadline - datetime.today()).days,
+            'evaluation_metric': competition.evaluationMetric,
+            'leaderboard': leaderboard,
+            'url': competition.url
+        }
