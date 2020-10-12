@@ -65,13 +65,13 @@ class CompetitionUpdater(object):
     def get_state(self, competition_ref):
         competitions = self.__api.competitions_list(search=competition_ref, page=1)
         if len(competitions) != 1:
-            return 'Use the id string of the competition (several competitions were found)'
+            return 'Use the id string or the title of the competition (several competitions were found)'
         competition = competitions[0]
-        if competition_ref != competition.ref:
-            return 'Use the id string of the competition (requested competition doesn\'t equal to any competition_id)'
+        if competition_ref not in [competition.ref, competition.title]:
+            return 'Use the id string or the title of the competition (requested competition doesn\'t equal to any competitions)'
 
         time.sleep(1)
-        leaderboard = self.get_leaderboard_info(competition_ref)
+        leaderboard = self.get_leaderboard_info(competition.ref)
 
         return {
             'title': competition.title,

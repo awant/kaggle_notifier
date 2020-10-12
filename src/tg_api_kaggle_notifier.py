@@ -29,7 +29,7 @@ def help_command(update, context):
         'Commands:\n'
         '/subscribe - Subscribe to get new kaggle competitions daily\n'
         '/unsubscribe - Unsubscribe from daily updates\n'
-        '/state <competition_id> - Get a current state of the competition\n'
+        '/state <competition> - Get a current state of the competition\n'
         '/help - Print this message again\n'
     )
     logger.info('chat_id {} requested the help command'.format(update.message.chat.id))
@@ -74,7 +74,7 @@ def state(update, context):
     chat_id = update.message.chat_id
     msg_text = update.message.text
     competition_id = msg_text[msg_text.find(' ')+1:]
-    logger.info('chat_id {} requested a state for the competition_id {}'.format(chat_id, competition_id))
+    logger.info('chat_id {} requested a state for the competition {}'.format(chat_id, competition_id))
     state = competition_updater.get_state(competition_id)
     if isinstance(state, str):
         update.message.reply_text(state)
